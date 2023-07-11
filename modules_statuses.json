@@ -1,0 +1,8 @@
+{
+    "User": true,
+    "Main": true,
+    "Dashboard": true,
+    "Login": true,
+    "Profile": true,
+    "Role": true
+}
