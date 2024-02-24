@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::controller(MainController::class)->group(function() {
-    Route::get('/main','index')->name('/');
+Route::controller(MainController::class)->middleware("auth")->group(function() {
+    Route::get('/','index')->name('/');
     Route::post('/main/getPage','getPage')->name('main/getPage');
 });
