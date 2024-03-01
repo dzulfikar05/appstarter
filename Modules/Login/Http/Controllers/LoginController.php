@@ -21,14 +21,14 @@ class LoginController extends Controller
     {
         $response = [];
         $credentials = $request->validate([
-            'user_email' => 'required',
-            // 'user_email' => ['required','email'],
+            'email' => 'required',
+            // 'email' => ['required','email'],
             'password' => 'required'
         ]);
         // print_r('<pre>'); print_r(Auth::attempt($credentials)); print_r('</pre>');exit;
         if(Auth::attempt($credentials)){
             $request->session()->regenerate();
-            $users = User::select()->where('user_email', $request->user_email)->get()->toArray();
+            $users = User::select()->where('email', $request->email)->get()->toArray();
             session(['userdata' => $users[0]]);
             return redirect()->to('');
         }else{

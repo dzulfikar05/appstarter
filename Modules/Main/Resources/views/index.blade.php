@@ -70,9 +70,8 @@
 				url : "{{ route('main/getPage') }}",
 				method: 'post',
 				success: function(data){
-					console.log(data);
 					$.each(data, (i, v)=> {
-						$('.'+v['route_desc']).removeClass('d-none')
+						$('.'+v['desc']).removeClass('d-none')
 					})
 				}
 			})

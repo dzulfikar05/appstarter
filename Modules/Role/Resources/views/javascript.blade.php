@@ -5,8 +5,8 @@
 
     var fields = [
         'role_id',
-        'role_kode',
-        'role_nama',
+        'code',
+        'name',
     ];
 
     $(() => {
@@ -32,19 +32,19 @@
                 $.each(data.all_route, (i, v) => {
                     if (v['route_desc'] == 'sub') {
                         html += `<label class="form-check ms-4">
-                                    <input id="route-${v['route_id']}" name="${v['route_id']}" class="form-check-input" type="checkbox"
+                                    <input id="route-${v['id']}" name="${v['id']}" class="form-check-input" type="checkbox"
                                         value="1">
                                     <span class="form-check-label">
-                                        ${v['route_alias']}
+                                        ${v['alias']}
                                     </span>
                                 </label>`;
 
                     } else {
                         html += `<label class="form-check">
-                                    <input id="route-${v['route_id']}" name="${v['route_id']}" class="form-check-input" type="checkbox"
+                                    <input id="route-${v['id']}" name="${v['id']}" class="form-check-input" type="checkbox"
                                         value="1">
                                     <span class="form-check-label">
-                                        ${v['route_alias']}
+                                        ${v['alias']}
                                     </span>
                                 </label>`;
                     }
@@ -52,7 +52,7 @@
                 $('.check-role').html(html);
 
                 $.each(data.role, (i, v) => {
-                    $('#route-' + v['user_role_route_id']).prop('checked', true)
+                    $('#route-' + v['id']).prop('checked', true)
                 });
             }
         })
@@ -111,17 +111,17 @@
                     }
                 },
                 {
-                    data: 'role_kode',
-                    name: 'role_kode',
+                    data: 'code',
+                    name: 'code',
                     render: function(data, type, full, meta) {
-                        return `<span>${full.role_kode?full.role_kode:''}</span>`;
+                        return `<span>${full.code?full.code:''}</span>`;
                     }
                 },
                 {
-                    data: 'role_nama',
-                    name: 'role_nama',
+                    data: 'name',
+                    name: 'name',
                     render: function(data, type, full, meta) {
-                        return `<span>${full.role_nama?full.role_nama:''}</span>`;
+                        return `<span>${full.name?full.name:''}</span>`;
                     }
                 },
                 {

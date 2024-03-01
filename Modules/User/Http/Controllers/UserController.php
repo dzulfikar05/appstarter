@@ -8,8 +8,9 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB; 
 use Modules\User\Entities\User;
+use Yajra\DataTables\DataTables;
 
-use DataTables;
+// use DataTables;
 
 
 class UserController extends Controller
@@ -25,14 +26,14 @@ class UserController extends Controller
     public function initTable(Request $request)
     {
         if ($request->ajax()) {
-            $data = DB::table('tb_user')->where([
-                    ['user_deleted_at', null], 
-                ])->get()->toArray();
+            $data = User::where([
+                    ['deleted_at', null], 
+                ])->get();
             
-            return Datatables::of($data)
+            return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('action', function($row){
-                        $id = $row->user_id;
+                        $id = $row->id;
                            $btn = '<div >
                                         <a href="#" onclick="onEdit(this)" data-id="'.$id.'" title="Edit Data" class="btn btn-warning btn-sm"><i class="align-middle fa fa-pencil fw-light text-dark"> </i></a>
                                         <a href="#" onclick="onDelete(this)" data-id="'.$id.'" title="Delete Data" class="btn btn-danger btn-sm"><i class="align-middle fa fa-trash fw-light"> </i></a>
@@ -53,23 +54,22 @@ class UserController extends Controller
 
         $data = $request->input();
        
-        $image = $request->file('user_photo');
+        $image = $request->file('photo');
 
-        $data['user_id'] = uniqid();
-        $data['user_created_at'] = date('Y-m-d H:i:s');
+        $data['created_at'] = date('Y-m-d H:i:s');
 
-        if(isset($data['user_active'])){
-            $data['user_active'] = 1;
+        if(isset($data['is_active'])){
+            $data['is_active'] = 1;
         }else{
-            $data['user_active'] = 0;
+            $data['is_active'] = 0;
         }
 
         if($image){
             $image->storeAs('public/uploads/user', $image->hashName());
-            $data['user_photo'] = $image->hashName();
+            $data['photo'] = $image->hashName();
         }
 
-        $operation = DB::table('tb_user')->insert($data);
+        $operation = User::insert($data);
         if($operation == 1){
             $response['success'] = true;
             $response['title'] = 'Success';
@@ -84,9 +84,9 @@ class UserController extends Controller
     }
 
     public function edit(Request $request){
-        $id = $request->input('user_id');
+        $id = $request->input('id');
 
-        $operation = DB::table('tb_user')->where('user_id', $id)->get()->toArray();
+        $operation = User::where('id', $id)->get()->toArray();
 
         return $operation;
     }
@@ -94,26 +94,26 @@ class UserController extends Controller
     public function update(Request $request)
     {
         $response=[];
-        $image = $request->file('user_photo');
+        $image = $request->file('photo');
 
         $data = $_POST;
-        $data['user_updated_at'] = date('Y-m-d H:i:s');
+        $data['updated_at'] = date('Y-m-d H:i:s');
 
-        if(isset($data['user_password'])){
-            if($data['user_password'] == '' || $data['user_password'] == null){
-                unset($data['user_password']);
+        if(isset($data['password'])){
+            if($data['password'] == '' || $data['password'] == null){
+                unset($data['password']);
             }
         }
 
         if($image){
             $image->storeAs('public/uploads/user', $image->hashName());
-            $data['user_photo'] = $image->hashName();
+            $data['photo'] = $image->hashName();
         }
 
-        $operation = DB::table('tb_user')->where('user_id', $data['user_id'])->update($data);
+        $operation = User::where('id', $data['id'])->update($data);
 
         if($operation == 1){
-            // $users = DB::table('tb_user')->where('user_id', $data['user_id'])->get()->toArray();
+            // $users = User::where('id', $data['id'])->get()->toArray();
             // session(['userdata' => $users[0]]);
             // $request->session()->put('userdata', $users[0]);
             
@@ -131,15 +131,15 @@ class UserController extends Controller
 
     public function destroy(Request $request){
         $response = [];
-        $id = $request->input('user_id');
+        $id = $request->input('id');
 
-        $user = DB::table('tb_user')->where('user_id', $id)->get()->toArray();
+        $user = User::where('id', $id)->get()->toArray();
         $data = [
-            'user_deleted_at' => date('Y-m-d H:i:s'),
-            'user_active' => null
+            'deleted_at' => date('Y-m-d H:i:s'),
+            'is_active' => null
         ];
-        $operation = DB::table('tb_user')->where('user_id', $id)->update($data);
-        Storage::disk('local')->delete('public/uploads/user/'.$user[0]->user_photo);
+        $operation = User::where('id', $id)->update($data);
+        Storage::disk('local')->delete('public/uploads/user/'.$user[0]->photo);
 
         if($operation == 1){
             $response['success'] = true;

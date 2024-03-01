@@ -167,9 +167,9 @@
 
                 <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
 
+                    <span class="text-dark me-3 fs-5" id="nama_user">Admin</span>
                     <img src="" style="object-fit: cover" id="pp_user" class="avatar img-fluid rounded me-1"
                         alt="Photo Profile" />
-                    <span class="text-dark" id="nama_user">Admin</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end">
                     <a class="menu-profile d-none dropdown-item {{ set_active('profile') }}" href="profile"><i class="align-middle me-1"
@@ -216,9 +216,9 @@
         })
     }
 
-    var image_pp = "<?= Session::get('userdata.user_photo') ?>";
+    var image_pp = "<?= Session::get('userdata.photo') ?>";
     $(() => {
-        $('#nama_user').html("<?= Session::get('userdata.user_nama') ?>");
+        $('#nama_user').html("<?= Session::get('userdata.name') ?>");
         if (image_pp != '') {
             $('#pp_user').attr('src', `<?php echo Storage::disk('local')->url('public/uploads/user/${image_pp}'); ?>`);
         } else {

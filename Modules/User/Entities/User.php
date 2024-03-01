@@ -13,29 +13,29 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, HasRoles;
 
-    protected $table = 'tb_user';
+    protected $table = 'users';
 
-    protected $primaryKey = 'user_id';
-    protected $keyType = 'string';
-    public $incrementing = false;
+    protected $primaryKey = 'id';
+    // protected $keyType = 'string';
+    // public $incrementing = false;
     
-    protected $fillable = [
-        'user_id',
-        'user_nama',
-        'user_username',
-        'user_email',
-        'user_password',
-        'user_photo',
-        'user_active',
-        'user_created_at',
-        'user_updated_at',
-        'user_deleted_at',
-    ];
+    // protected $fillable = [
+    //     'user_id',
+    //     'user_nama',
+    //     'user_username',
+    //     'user_email',
+    //     'user_password',
+    //     'user_photo',
+    //     'user_active',
+    //     'user_created_at',
+    //     'user_updated_at',
+    //     'user_deleted_at',
+    // ];
 
-    public $timestamps = false;
+    public $timestamps = true;
     
     public function getAuthPassword () {
-        return $this->user_password;
+        return $this->password;
     }
     public function setPasswordAttribute($value)
     {

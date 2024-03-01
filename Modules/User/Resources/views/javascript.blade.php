@@ -2,22 +2,22 @@
     var table = 'table_user';
     var form = 'form_user';
     var fields = [
-        'user_id',
-        'user_nama',
-        'user_username',
-        'user_email',
-        'user_password',
-        // 'user_photo',
-        'user_active',
-        'user_role',
+        'id',
+        'nama',
+        'username',
+        'email',
+        'password',
+        // 'photo',
+        'is_active',
+        'role',
     ];
 
     $(() => {
-        $("#user_photo").change(function() {
+        $("#photo").change(function() {
             readURL(this);
         });
 
-        $('#user_role').select2({
+        $('#role').select2({
             dropdownParent: $('.viewForm')
         });
 
@@ -28,7 +28,7 @@
 
     showForm = () => {
         $('.viewForm').modal('show')
-        $('#user_password').val('').attr('placeholder', 'Password');
+        $('#password').val('').attr('placeholder', 'Password');
 
     }
 
@@ -49,12 +49,12 @@
                     }
                 },
                 {
-                    data: 'user_nama',
-                    name: 'user_nama',
+                    data: 'nama',
+                    name: 'nama',
                     render: function(data, type, full, meta) {
                         var image = '';
-                        if (full.user_photo) {
-                            image += `<?= asset('storage/uploads/user/`+full.user_photo+`') ?>`
+                        if (full.photo) {
+                            image += `<?= asset('storage/uploads/user/`+full.photo+`') ?>`
                         } else {
                             image += `<?= asset('assets/noImage.jpg') ?>`
                         }
@@ -65,32 +65,32 @@
                                     <img src="${image}" class="rounded-3" style="width: 50px;" alt="Avatar" />
                                 </div>
                                 <div class="col-12">
-                                    <span>${full.user_nama?full.user_nama:''}</span>
+                                    <span>${full.nama?full.nama:''}</span>
                                 </div>
                             </div>
                             `;
                     }
                 },
                 {
-                    data: 'user_username',
-                    name: 'user_username',
+                    data: 'username',
+                    name: 'username',
                     render: function(data, type, full, meta) {
-                        return `<span>${full.user_username?full.user_username:''}</span>`;
+                        return `<span>${full.username?full.username:''}</span>`;
                     }
                 },
                 {
-                    data: 'user_email',
-                    name: 'user_email',
+                    data: 'email',
+                    name: 'email',
                     render: function(data, type, full, meta) {
-                        return `<span>${full.user_email?full.user_email:''}</span>`;
+                        return `<span>${full.email?full.email:''}</span>`;
                     }
                 },
                 {
-                    data: 'user_active',
-                    name: 'user_active',
+                    data: 'is_active',
+                    name: 'is_active',
                     render: function(data, type, full, meta) {
                         var status = '';
-                        if (full.user_active == 1) {
+                        if (full.is_active == 1) {
                             status += `<span class="badge bg-success">Active</span>`;
                         } else {
                             status += `<span class="badge bg-danger">Non Active</span>`;
@@ -112,7 +112,7 @@
     onSave = () => {
         var formData = new FormData($(`[name="${form}"]`)[0]);
 
-        var id_user = $('#user_id').val();
+        var id_user = $('#id').val();
         var urlSave = "";
 
         if (id_user == '' || id_user == null) {
@@ -164,16 +164,16 @@
             },
             url: "{{ route('user/edit') }}",
             data: {
-                user_id: id
+                id: id
             },
             method: 'post',
             success: function(data) {
                 showForm()
 
-                var img = data[0]['user_photo'];
+                var img = data[0]['photo'];
 
                 if (img) {
-                    $('#user_photoPreview').attr('src',
+                    $('#photoPreview').attr('src',
                         `{{ Storage::disk('local')->url('public/uploads/user/${img}') }}`);
                 }
 
@@ -181,13 +181,13 @@
                     $('#' + v).val(data[0][v]).change()
                 })
 
-                $('#user_password').val('').attr('placeholder',
+                $('#password').val('').attr('placeholder',
                     'Kosongkan jika ingin mengubah password');
 
-                if (data[0]['user_active'] == 1) {
-                    $('#user_active').prop('checked', true)
+                if (data[0]['is_active'] == 1) {
+                    $('#is_active').prop('checked', true)
                 } else {
-                    $('#user_active').prop('checked', false)
+                    $('#is_active').prop('checked', false)
                 }
             }
         })
@@ -205,7 +205,7 @@
                         },
                         url: "{{ route('user/destroy') }}",
                         data: {
-                            user_id: id
+                            id: id
                         },
                         method: 'post',
 
@@ -230,7 +230,7 @@
         $.each(fields, function(i, v) {
             $('#' + v).val('').change()
         })
-        $('#user_active').prop('checked', false);
+        $('#is_active').prop('checked', false);
         removePP()
     }
 
@@ -239,15 +239,15 @@
             var reader = new FileReader();
 
             reader.onload = function(e) {
-                $('#user_photoPreview').attr('src', e.target.result).fadeIn('slow');
+                $('#photoPreview').attr('src', e.target.result).fadeIn('slow');
             }
             reader.readAsDataURL(input.files[0]);
         }
     }
 
     removePP = () => {
-        $('#user_photoPreview').attr('src', '').fadeIn('slow');
-        $('#user_photo').val('');
+        $('#photoPreview').attr('src', '').fadeIn('slow');
+        $('#photo').val('');
     }
 
     onCombobox = (el) => {
@@ -261,8 +261,8 @@
             success: function(data) {
                 
                 $.each(data, (i, v)=>{
-                    $('#user_role').append(`
-                        <option value="${v['role_id']}">${v['role_nama']}</option>
+                    $('#role').append(`
+                        <option value="${v['id']}">${v['nama']}</option>
                     `);
                 })
                 unblock()

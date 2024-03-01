@@ -6,11 +6,14 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB; 
+use Illuminate\Support\Facades\DB;
+use Modules\Role\Entities\Role as EntitiesRole;
+use Modules\Role\Entities\Route;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+use Modules\Role\Entities\Role;
+use Yajra\DataTables\Facades\DataTables;
 
-use DataTables;
+// use DataTables;
 
 class RoleController extends Controller
 {
@@ -26,14 +29,14 @@ class RoleController extends Controller
     public function initTable(Request $request)
     {
         if ($request->ajax()) {
-            $data = DB::table('tb_role')->where([
-                    ['role_deleted_at', null], 
+            $data = DB::table('role')->where([
+                    ['deleted_at', null], 
                 ])->get()->toArray();
             
-            return Datatables::of($data)
+            return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('action', function($row){
-                        $id = $row->role_id;
+                        $id = $row->id;
                            $btn = '<div >
                                     <a href="#" onclick="onEdit(this)" data-id="'.$id.'" title="Edit Data" class="btn btn-warning btn-sm"><i class="align-middle fa fa-pencil fw-light text-dark"> </i></a>
                                     <a href="#" onclick="onDelete(this)" data-id="'.$id.'" title="Delete Data" class="btn btn-danger btn-sm"><i class="align-middle fa fa-trash fw-light"> </i></a>
@@ -56,7 +59,7 @@ class RoleController extends Controller
         $data = $request->input();
         $data['role_id'] = unique_code();
 
-        $operation = DB::table('tb_role')->insert($data);
+        $operation = EntitiesRole::insert($data);
         if($operation == 1){
             $response['success'] = true;
             $response['title'] = 'Success';
@@ -73,7 +76,7 @@ class RoleController extends Controller
     public function edit(Request $request){
         $id = $request->input('role_id');
 
-        $operation = DB::table('tb_role')->where('role_id', $id)->get()->toArray();
+        $operation = Role::where('role_id', $id)->get()->toArray();
         return $operation;
     }
 
@@ -84,7 +87,7 @@ class RoleController extends Controller
 
         $data['role_updated_at'] = date('Y-m-d H:i:s');
 
-        $operation = DB::table('tb_role')->where('role_id', $data['role_id'])->update($data);
+        $operation = Role::where('role_id', $data['role_id'])->update($data);
 
         if($operation == 1){
             $response['success'] = true;
@@ -103,10 +106,10 @@ class RoleController extends Controller
         $id = $request->input('role_id');
 
         $data = [
-            'role_deleted_at' => date('Y-m-d H:i:s'),
+            'deleted_at' => date('Y-m-d H:i:s'),
         ];
 
-        $operation = DB::table('tb_role')->where('role_id', $id)->update($data);
+        $operation = Role::where('role_id', $id)->update($data);
 
         if($operation == 1){
             $response['success'] = true;
@@ -126,15 +129,15 @@ class RoleController extends Controller
         $userRoleId =  $request->input('role_id');
 
         // get all route
-        $getAll = DB::table('tb_route')->where([
-            ['route_active', 1], 
-        ])->orderBy('route_order', 'ASC')->get()->toArray();
+        $getAll = Route::where([
+            ['is_active', 1], 
+        ])->orderBy('order', 'ASC')->get()->toArray();
         $data['all_route'] = convertArray($getAll);
 
         // get route in role
         $getRole = DB::table('v_user_roles')->where([
-            ['user_role_role_id', $userRoleId], 
-            ])->orderBy('route_order', 'ASC')->get()->toArray();
+            ['role_id', $userRoleId], 
+            ])->orderBy('order', 'ASC')->get()->toArray();
         $data['role'] = convertArray($getRole);
         
         return $data;
@@ -179,7 +182,7 @@ class RoleController extends Controller
     }
 
     public function combobox(Request $request){
-        $operation = DB::table('tb_role')->whereNull('role_deleted_at')->get()->toArray();
+        $operation = Role::whereNull('deleted_at')->get()->toArray();
         $data = convertArray($operation);
         return $data;
     }

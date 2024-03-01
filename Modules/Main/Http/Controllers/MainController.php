@@ -23,12 +23,13 @@ class MainController extends Controller
 
     public function getPage()
     {
-        $userRole = session()->get('userdata.user_role');
+        $userRole = session()->get('userdata.role_id');
 
-        $q1 = DB::table('v_user_roles')->where([
-            ['user_role_role_id' ,'=', $userRole],
-        ])->orderBy('route_order', 'ASC')->get()->toArray();
-        $data = convertArray($q1);
+        $operation = DB::table('v_user_roles')->where([
+            ['role_id' ,'=', $userRole],
+        ])->orderBy('order', 'ASC')->get()->toArray();
+
+        $data = convertArray($operation);
         
         return($data);
 
