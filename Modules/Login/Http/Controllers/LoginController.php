@@ -68,7 +68,6 @@ class LoginController extends Controller
             session(['userdata' => $dataUser]);
         }else{
             $data =[
-                'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
                 'google_auth' => 1
