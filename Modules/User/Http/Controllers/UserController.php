@@ -28,7 +28,7 @@ class UserController extends Controller
         if ($request->ajax()) {
             $data = User::where([
                     ['deleted_at', null], 
-                ])->get();
+                ])->get()->toArray();
             
             return DataTables::of($data)
                     ->addIndexColumn()
@@ -56,6 +56,7 @@ class UserController extends Controller
        
         $image = $request->file('photo');
 
+        $data['id'] = uniqid();
         $data['created_at'] = date('Y-m-d H:i:s');
 
         if(isset($data['is_active'])){
@@ -69,7 +70,7 @@ class UserController extends Controller
             $data['photo'] = $image->hashName();
         }
 
-        $operation = User::insert($data);
+        $operation = DB::table('tb_user')->insert($data);
         if($operation == 1){
             $response['success'] = true;
             $response['title'] = 'Success';
@@ -86,7 +87,7 @@ class UserController extends Controller
     public function edit(Request $request){
         $id = $request->input('id');
 
-        $operation = User::where('id', $id)->get()->toArray();
+        $operation = DB::table('tb_user')->where('id', $id)->get()->toArray();
 
         return $operation;
     }
@@ -110,10 +111,10 @@ class UserController extends Controller
             $data['photo'] = $image->hashName();
         }
 
-        $operation = User::where('id', $data['id'])->update($data);
+        $operation = DB::table('tb_user')->where('id', $data['id'])->update($data);
 
         if($operation == 1){
-            // $users = User::where('id', $data['id'])->get()->toArray();
+            // $users = DB::table('tb_user')->where('id', $data['id'])->get()->toArray();
             // session(['userdata' => $users[0]]);
             // $request->session()->put('userdata', $users[0]);
             
@@ -133,12 +134,12 @@ class UserController extends Controller
         $response = [];
         $id = $request->input('id');
 
-        $user = User::where('id', $id)->get()->toArray();
+        $user = DB::table('tb_user')->where('id', $id)->get()->toArray();
         $data = [
             'deleted_at' => date('Y-m-d H:i:s'),
             'is_active' => null
         ];
-        $operation = User::where('id', $id)->update($data);
+        $operation = DB::table('tb_user')->where('id', $id)->update($data);
         Storage::disk('local')->delete('public/uploads/user/'.$user[0]->photo);
 
         if($operation == 1){

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Socialite\Facades\Socialite;
 use Modules\User\Entities\User;
 
 
@@ -47,5 +48,37 @@ class LoginController extends Controller
         request()->session()->invalidate();
         request()->session()->regenerateToken();
         return;
+    }
+
+    public function googleRedirect()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function googleCallback()
+    {
+        session()->regenerate();
+        $user = Socialite::driver('google')->user();
+        $userCheck = User::where('email', $user->email)->first();
+
+        if($userCheck){
+
+            Auth::login($userCheck);
+            $dataUser = convertArray($userCheck);
+            session(['userdata' => $dataUser]);
+        }else{
+            $data =[
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'google_auth' => 1
+            ];
+            User::insert($data);
+            Auth::login($user);
+            $dataUser = convertArray($userCheck);
+            session(['userdata' => $dataUser]);
+        }
+
+        return redirect()->to('');
     }
 }

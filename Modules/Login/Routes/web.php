@@ -1,5 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
 use Modules\Login\Http\Controllers\LoginController;
 
 /*
@@ -21,3 +22,14 @@ Route::controller(LoginController::class)->group(function() {
     Route::post('/login/authentication','authentication')->name('login/authentication');
     Route::post('/login/logout', 'logout')->name(('login/logout'));
 });
+
+Route::controller(LoginController::class)->group(function() {
+    Route::get('/login/googleRedirect','googleRedirect')->name('login/googleRedirect');
+    Route::get('/google/redirect','googleCallback')->name('google/redirect');
+});
+ 
+// Route::get('/auth/callback', function () {
+//     $user = Socialite::driver('github')->user();
+ 
+//     // $user->token
+// });

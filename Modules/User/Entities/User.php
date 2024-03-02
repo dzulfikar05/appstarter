@@ -17,20 +17,20 @@ class User extends Authenticatable
 
     protected $primaryKey = 'id';
     // protected $keyType = 'string';
-    // public $incrementing = false;
+    public $incrementing = true;
     
-    // protected $fillable = [
-    //     'user_id',
-    //     'user_nama',
-    //     'user_username',
-    //     'user_email',
-    //     'user_password',
-    //     'user_photo',
-    //     'user_active',
-    //     'user_created_at',
-    //     'user_updated_at',
-    //     'user_deleted_at',
-    // ];
+    protected $fillable = [
+        'user_id',
+        'user_nama',
+        'user_username',
+        'user_email',
+        'user_password',
+        'user_photo',
+        'user_active',
+        'user_created_at',
+        'user_updated_at',
+        'user_deleted_at',
+    ];
 
     public $timestamps = true;
     
